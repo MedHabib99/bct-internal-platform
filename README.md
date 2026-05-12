@@ -33,6 +33,29 @@ The platform centralizes internal communication and tools for sellers and team l
 - Restricted access to admin/teamleader areas
 - Password reset and password change functions
 
+## Screenshots
+
+### Login Page
+![Login](screenshots/login-page.png)
+
+### OTP Authentication
+![OTP](screenshots/otp-authentication-page.png)
+
+### Seller Dashboard
+![Seller Directory](screenshots/seller-company-directory.png)
+
+### Teamleader Dashboard
+![Teamleader Directory](screenshots/teamleader-company-directory.png)
+
+### Documents Management
+![Documents](screenshots/teamleader-documents-management.png)
+
+### Password Management
+![Password](screenshots/password-change-page.png)
+
+### User Feedback
+![Feedback](screenshots/user-feedback-anonymous-feature.png)
+
 ## Setup
 
 ```bash
