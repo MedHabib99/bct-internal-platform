@@ -17,6 +17,11 @@ The platform centralizes internal communication and tools for sellers and team l
 - Work safety information
 - Team directory
 - General information and partner overview
+## Documentation
+
+Full university project report (German):
+
+[View PDF Documentation](docs/Praxisprojekt_Report.pdf)
 
 ## Technologies
 
