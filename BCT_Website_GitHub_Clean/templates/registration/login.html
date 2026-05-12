@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Login – BCT{% endblock %}
+
+{% block content %}
+  <div class="card" style="max-width:420px;margin:32px auto;">
+    <h2 style="margin-top:0;">Employee Login</h2>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <label class="field">Username
+        <input type="text" name="username" required autofocus>
+      </label>
+      <label class="field">Password
+        <input type="password" name="password" required>
+      </label>
+      <button class="btn" type="submit">Log in</button>
+    </form>
+
+    {% if form and form.errors %}
+      <p style="color:#b00020;margin-top:10px;">Invalid username or password.</p>
+    {% endif %}
+    {% for message in messages %}
+      <p style="margin-top:10px;">{{ message }}</p>
+    {% endfor %}
+  </div>
+{% endblock %}

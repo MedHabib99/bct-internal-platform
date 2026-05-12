@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block title %}Manage Categories - Work Safety{% endblock %}
+
+{% block content %}
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .page-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+
+  .categories-card {
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .category-item {
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+  }
+
+  .category-item:hover {
+    background: #f8f9fa;
+  }
+
+  .category-item:last-child {
+    border-bottom: none;
+  }
+
+  .category-info {
+    flex: 1;
+  }
+
+  .category-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+  }
+
+  .category-meta {
+    font-size: 0.85rem;
+    color: #6c757d;
+  }
+
+  .category-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary {
+    background: var(--bct-red);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #c82333;
+    color: white;
+  }
+
+  .btn-secondary {
+    background: #6c757d;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background: #5a6268;
+    color: white;
+  }
+
+  .btn-outline-primary {
+    background: transparent;
+    border: 2px solid var(--bct-red);
+    color: var(--bct-red);
+  }
+
+  .btn-outline-primary:hover {
+    background: var(--bct-red);
+    color: white;
+  }
+
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-gray);
+  }
+
+  .empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+  }
+</style>
+
+<div class="page-header">
+  <h1>Manage Categories</h1>
+  <div style="display: flex; gap: 8px;">
+    <a class="btn btn-primary" href="{% url 'worksafety:create_category' %}">+ New Category</a>
+    <a class="btn btn-secondary" href="{% url 'worksafety:index' %}">← Back</a>
+  </div>
+</div>
+
+<div class="categories-card">
+  {% if categories %}
+    <ul class="category-list">
+      {% for category in categories %}
+      <li class="category-item">
+        <div class="category-info">
+          <div class="category-name">{{ category.name }}</div>
+          <div class="category-meta">
+            Slug: {{ category.slug }} | Order: {{ category.order }} | Documents: {{ category.doc_count }}
+          </div>
+        </div>
+        <div class="category-actions">
+          <a href="{% url 'worksafety:edit_category' category.pk %}" class="btn btn-outline-primary btn-sm">Edit</a>
+          <a href="{% url 'worksafety:delete_category' category.pk %}" class="btn btn-secondary btn-sm">Delete</a>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon">📁</div>
+      <h2>No Categories Yet</h2>
+      <p>Create your first category to organize safety documents.</p>
+      <p style="margin-top: 16px;">
+        <a href="{% url 'worksafety:create_category' %}" class="btn btn-primary">Create First Category</a>
+      </p>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

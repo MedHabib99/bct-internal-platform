@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Delete Event - {{ event.title }} - BCT Sellers Platform{% endblock %}
+
+{% block content %}
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .delete-container {
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .warning-icon {
+    text-align: center;
+    font-size: 4rem;
+    margin-bottom: 16px;
+  }
+  
+  .delete-container h2 {
+    text-align: center;
+    margin: 0 0 16px 0;
+    font-size: 1.5rem;
+    color: var(--text-dark);
+  }
+  
+  .warning-text {
+    text-align: center;
+    color: var(--text-gray);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  
+  .event-info-box {
+    background: var(--bg-light);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 24px 0;
+    border-left: 4px solid #dc2626;
+  }
+  
+  .event-info-box h3 {
+    margin: 0 0 12px 0;
+    font-size: 1.2rem;
+    color: var(--text-dark);
+  }
+  
+  .event-detail {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+    color: var(--text-gray);
+    font-size: 0.95rem;
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  
+  .btn-danger {
+    background: #dc2626;
+    color: white;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  
+  .btn-danger:hover {
+    background: #b91c1c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  }
+</style>
+
+<div class="page-header">
+  <a class="btn btn-secondary btn-sm" href="{% url 'events:detail' event.pk %}">← Back to Event</a>
+</div>
+
+<div class="delete-container">
+  <div class="warning-icon">⚠️</div>
+  
+  <h2>Delete Event?</h2>
+  
+  <p class="warning-text">
+    Are you sure you want to delete this event? This action cannot be undone.
+    All RSVPs and participant data will be permanently deleted.
+  </p>
+  
+  <div class="event-info-box">
+    <h3>{{ event.title }}</h3>
+    <div class="event-detail">
+      📅 {{ event.date|date:"l, F d, Y" }} at {{ event.date|date:"H:i" }}
+    </div>
+    <div class="event-detail">
+      📍 {{ event.location }}
+    </div>
+    <div class="event-detail">
+      👥 {{ event.participants.count }} participant(s) have responded
+    </div>
+  </div>
+  
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-actions">
+      <button type="submit" class="btn-danger">Yes, Delete Event</button>
+      <a href="{% url 'events:detail' event.pk %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

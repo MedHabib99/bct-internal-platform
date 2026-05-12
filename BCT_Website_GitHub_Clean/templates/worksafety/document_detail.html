@@ -1,0 +1,377 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ document.title }} - Work Safety{% endblock %}
+
+{% block content %}
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .page-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+
+  .document-detail-card {
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 24px;
+  }
+
+  .document-meta {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e9ecef;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .meta-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .badge-acknowledged {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .badge-action-required {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .badge-version {
+    background: #6c757d;
+    color: white;
+  }
+
+  .badge-active {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .badge-archived {
+    background: #e2e3e5;
+    color: #383d41;
+  }
+
+  .ack-callout {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+  }
+
+  .ack-callout h3 {
+    margin: 0 0 12px 0;
+    color: #856404;
+    font-size: 1.1rem;
+  }
+
+  .ack-callout p {
+    margin: 0 0 16px 0;
+    color: #856404;
+  }
+
+  .success-callout {
+    background: #d4edda;
+    border-left: 4px solid #28a745;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+  }
+
+  .success-callout h3 {
+    margin: 0 0 12px 0;
+    color: #155724;
+    font-size: 1.1rem;
+  }
+
+  .success-callout p {
+    margin: 0;
+    color: #155724;
+  }
+
+  .document-description {
+    margin: 24px 0;
+    line-height: 1.7;
+    color: var(--text-gray);
+  }
+
+  .document-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: var(--bct-red);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #c82333;
+    color: white;
+  }
+
+  .btn-success {
+    background: #28a745;
+    color: white;
+  }
+
+  .btn-success:hover {
+    background: #218838;
+    color: white;
+  }
+
+  .btn-secondary {
+    background: #6c757d;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background: #5a6268;
+    color: white;
+  }
+
+  .btn-outline-primary {
+    background: transparent;
+    border: 2px solid var(--bct-red);
+    color: var(--bct-red);
+  }
+
+  .btn-outline-primary:hover {
+    background: var(--bct-red);
+    color: white;
+  }
+
+  .btn-danger {
+    background: #dc3545;
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background: #c82333;
+    color: white;
+  }
+
+  .acknowledgements-section {
+    margin-top: 32px;
+  }
+
+  .acknowledgements-section h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-dark);
+  }
+
+  .ack-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .ack-stat {
+    background: #f8f9fa;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .ack-stat-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--bct-red);
+  }
+
+  .ack-stat-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+  }
+
+  .ack-list {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .ack-list-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ack-list-item:last-child {
+    border-bottom: none;
+  }
+
+  .ack-list-item:hover {
+    background: #f8f9fa;
+  }
+
+  .ack-user {
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  .ack-date {
+    font-size: 0.85rem;
+    color: #6c757d;
+  }
+</style>
+
+<div class="page-header">
+  <h1>{{ document.title }}</h1>
+  <a class="btn btn-secondary" href="{% url 'worksafety:index' %}">← Back to Safety</a>
+</div>
+
+<div class="document-detail-card">
+  <!-- Document Metadata -->
+  <div class="document-meta">
+    <div class="meta-item">
+      <span class="meta-label">Category</span>
+      <span class="meta-value">{{ document.category.name }}</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Version</span>
+      <span class="meta-value"><span class="badge badge-version">v{{ document.version }}</span></span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Status</span>
+      <span class="meta-value">
+        {% if document.status == 'active' %}
+          <span class="badge badge-active">Active</span>
+        {% else %}
+          <span class="badge badge-archived">Archived</span>
+        {% endif %}
+      </span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Last Updated</span>
+      <span class="meta-value">{{ document.updated_at|date:"M d, Y H:i" }}</span>
+    </div>
+    {% if is_teamleader and document.created_by %}
+    <div class="meta-item">
+      <span class="meta-label">Created By</span>
+      <span class="meta-value">{{ document.created_by.get_full_name|default:document.created_by.username }}</span>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Acknowledgement Status -->
+  {% if document.status == 'active' %}
+    {% if needs_acknowledgement %}
+    <div class="ack-callout">
+      <h3>⚠️ Acknowledgement Required</h3>
+      <p>Please review this document and acknowledge that you have read and understood it.</p>
+      <form method="post" action="{% url 'worksafety:acknowledge_document' document.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">✓ I Acknowledge This Document</button>
+      </form>
+    </div>
+    {% else %}
+      {% if user_ack %}
+      <div class="success-callout">
+        <h3>✓ You Have Acknowledged This Document</h3>
+        <p>Version {{ user_ack.version }} acknowledged on {{ user_ack.acknowledged_at|date:"M d, Y H:i" }}</p>
+      </div>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+
+  <!-- Document Description -->
+  {% if document.description %}
+  <div class="document-description">
+    <h3>Description</h3>
+    <p>{{ document.description|linebreaks }}</p>
+  </div>
+  {% endif %}
+
+  <!-- Document File -->
+  <div class="document-actions">
+    <a href="{{ document.file.url }}" class="btn btn-primary" target="_blank">📄 View/Download Document</a>
+    
+    {% if is_teamleader %}
+      <a href="{% url 'worksafety:edit_document' document.pk %}" class="btn btn-outline-primary">Edit Document</a>
+      <a href="{% url 'worksafety:delete_document' document.pk %}" class="btn btn-danger">Delete</a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Acknowledgements (Team Leaders Only) -->
+{% if is_teamleader and acknowledgements %}
+<div class="acknowledgements-section">
+  <h3>Acknowledgement Tracking (Current Version)</h3>
+  
+  <div class="ack-stats">
+    <div class="ack-stat">
+      <div class="ack-stat-number">{{ ack_count }}</div>
+      <div class="ack-stat-label">Users Acknowledged</div>
+    </div>
+  </div>
+
+  {% if acknowledgements %}
+  <div class="ack-list">
+    {% for ack in acknowledgements %}
+    <div class="ack-list-item">
+      <span class="ack-user">{{ ack.user.get_full_name|default:ack.user.username }}</span>
+      <span class="ack-date">{{ ack.acknowledged_at|date:"M d, Y H:i" }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

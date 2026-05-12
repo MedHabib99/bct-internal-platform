@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}General Information - BCT Sellers Platform{% endblock %}
+
+{% block content %}
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .page-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  
+  .info-section {
+    margin-bottom: 32px;
+  }
+  
+  .info-section h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--bct-red);
+  }
+  
+  .info-item {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  
+  .info-item h3 {
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+  
+  .info-item p {
+    margin: 0;
+    line-height: 1.7;
+    color: var(--text-gray);
+    white-space: pre-wrap;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-gray);
+  }
+  
+  .empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+  }
+</style>
+
+<div class="page-header">
+  <h1>ℹ️ General Information</h1>
+  <a class="btn btn-secondary btn-sm" href="{% url 'home' %}">← Back to Dashboard</a>
+</div>
+
+{% if not vouchers and not company and not tours and not policies and not benefits %}
+<div class="card empty-state">
+  <div class="empty-state-icon">ℹ️</div>
+  <h2>General Information</h2>
+  <p>Company information will be added here soon by your team leaders.</p>
+  <p style="margin-top: 12px;">This section will include vouchers, company policies, tour details, and more.</p>
+</div>
+{% else %}
+
+{% if vouchers %}
+<div class="info-section">
+  <h2>🎟️ Vouchers</h2>
+  {% for item in vouchers %}
+  <div class="info-item">
+    <h3>{{ item.title }}</h3>
+    <p>{{ item.content }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if company %}
+<div class="info-section">
+  <h2>🏢 Company Information</h2>
+  {% for item in company %}
+  <div class="info-item">
+    <h3>{{ item.title }}</h3>
+    <p>{{ item.content }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if tours %}
+<div class="info-section">
+  <h2>🚌 Tour Information</h2>
+  {% for item in tours %}
+  <div class="info-item">
+    <h3>{{ item.title }}</h3>
+    <p>{{ item.content }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if policies %}
+<div class="info-section">
+  <h2>📜 Policies</h2>
+  {% for item in policies %}
+  <div class="info-item">
+    <h3>{{ item.title }}</h3>
+    <p>{{ item.content }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if benefits %}
+<div class="info-section">
+  <h2>⭐ Employee Benefits</h2>
+  {% for item in benefits %}
+  <div class="info-item">
+    <h3>{{ item.title }}</h3>
+    <p>{{ item.content }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}
+

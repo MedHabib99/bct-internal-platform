@@ -1,0 +1,49 @@
+{# templates/feedback/admin_list.html #}
+
+
+{% extends "base.html" %}
+{% load tz %}
+{% block title %}Feedback Inbox (TeamLeaders){% endblock %}
+
+{% block content %}
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+    <h2 style="margin:0;">Feedback Inbox</h2>
+    <div>
+      <a class="btn" href="{% url 'home' %}">← Dashboard</a>
+      <a class="btn" href="{% url 'feedback:my_list' %}">My feedback</a>
+    </div>
+  </div>
+
+  {% if items %}
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="text-align:left;border-bottom:1px solid #ddd;padding:8px;">ID</th>
+          <th style="text-align:left;border-bottom:1px solid #ddd;padding:8px;">Reporter</th>
+          <th style="text-align:left;border-bottom:1px solid #ddd;padding:8px;">Title</th>
+          <th style="text-align:left;border-bottom:1px solid #ddd;padding:8px;">Category</th>
+          <th style="text-align:left;border-bottom:1px solid #ddd;padding:8px;">Status</th>
+          <th style="text-align:left;border-bottom:1px solid #ddd;padding:8px;">Created</th>
+          <th style="text-align:left;border-bottom:1px solid #ddd;padding:8px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for row in items %}
+        <tr>
+          <td style="padding:8px;border-bottom:1px solid #f0f0f0;">#{{ row.id }}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f0f0;">{{ row.reporter_display }}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f0f0;">{{ row.title }}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f0f0;">{{ row.get_category_display }}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f0f0;">{{ row.get_status_display }}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f0f0;">{{ row.created_at|timezone:"Europe/Berlin"|date:"Y-m-d H:i" }}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f0f0;">
+            <a class="btn" href="{% url 'feedback:detail' row.id %}">Open</a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No feedback in the inbox.</p>
+  {% endif %}
+{% endblock %}

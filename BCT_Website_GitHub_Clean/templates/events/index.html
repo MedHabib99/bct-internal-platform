@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block title %}Company Events - BCT Sellers Platform{% endblock %}
+
+{% block content %}
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .page-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  
+  .event-card {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 4px solid var(--bct-red);
+    transition: all 0.2s;
+  }
+  
+  .event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 12px;
+    gap: 16px;
+  }
+  
+  .event-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-dark);
+  }
+  
+  .event-status {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  
+  .event-status.going {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  
+  .event-status.maybe {
+    background: #fef3c7;
+    color: #78350f;
+  }
+  
+  .event-status.full {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  
+  .event-status.not-attending {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  
+  .rsvp-counts {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    padding: 12px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+  }
+  
+  .rsvp-count-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95rem;
+  }
+  
+  .rsvp-count-item .count {
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  
+  .rsvp-count-item .label {
+    color: var(--text-gray);
+  }
+  
+  .event-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+    padding: 16px;
+    background: var(--bg-light);
+    border-radius: 8px;
+  }
+  
+  .info-item {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+  }
+  
+  .event-description {
+    color: var(--text-gray);
+    line-height: 1.6;
+    margin: 16px 0;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-gray);
+  }
+  
+  .empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+  }
+</style>
+
+<div class="page-header">
+  <h1>🎉 Company Events</h1>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+    {% if is_teamleader %}
+    <a class="btn btn-primary btn-sm" href="{% url 'events:create' %}">+ Create Event</a>
+    {% endif %}
+    <a class="btn btn-secondary btn-sm" href="{% url 'home' %}">← Back to Dashboard</a>
+  </div>
+</div>
+
+{% if not events %}
+<div class="card empty-state">
+  <div class="empty-state-icon">🎉</div>
+  <h2>Company Events</h2>
+  <p>Upcoming events will be posted here by your team leaders.</p>
+  <p style="margin-top: 12px;">Join team activities, celebrations, and company gatherings.</p>
+</div>
+{% else %}
+
+{% for event in events %}
+<div class="event-card">
+  <div class="event-header">
+    <h2 class="event-title">{{ event.title }}</h2>
+    {% if event.user_status == 'yes' %}
+      <span class="event-status going">✓ You're Attending</span>
+    {% elif event.user_status == 'no' %}
+      <span class="event-status not-attending">✗ Not Attending</span>
+    {% elif event.user_status == 'going' %}
+      <span class="event-status going">✓ You're Going</span>
+    {% elif event.user_status == 'maybe' %}
+      <span class="event-status maybe">? Maybe</span>
+    {% elif event.is_full %}
+      <span class="event-status full">Full</span>
+    {% endif %}
+  </div>
+  
+  <div class="event-info">
+    <div class="info-item">📅 {{ event.date|date:"F d, Y" }}</div>
+    <div class="info-item">🕐 {{ event.date|date:"H:i" }}</div>
+    <div class="info-item">📍 {{ event.location }}</div>
+    {% if event.max_participants %}
+    <div class="info-item">👥 {{ event.yes_count }}/{{ event.max_participants }} spots</div>
+    {% else %}
+    <div class="info-item">👥 {{ event.yes_count }} attending</div>
+    {% endif %}
+  </div>
+  
+  <div class="event-description">
+    {{ event.description|truncatewords:30 }}
+  </div>
+  
+  <div class="rsvp-counts">
+    <div class="rsvp-count-item">
+      <span class="label">Yes:</span>
+      <span class="count">{{ event.yes_count }}</span>
+    </div>
+    <div class="rsvp-count-item">
+      <span class="label">|</span>
+    </div>
+    <div class="rsvp-count-item">
+      <span class="label">No:</span>
+      <span class="count">{{ event.no_count }}</span>
+    </div>
+  </div>
+  
+  <a href="{% url 'events:detail' event.pk %}" class="btn btn-primary">View Details & RSVP</a>
+</div>
+{% endfor %}
+
+{% endif %}
+
+{% endblock %}
+

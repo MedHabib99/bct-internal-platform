@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Enter your OTP</h1>
+
+<p>We sent a 6-digit code to your email.</p>
+
+<form method="post">
+  {% csrf_token %}
+  <label>OTP Code:</label><br>
+  <input type="text" name="code" maxlength="6" required><br><br>
+  <button type="submit">Verify</button>
+</form>
+
+{% if messages %}
+  <ul>
+    {% for m in messages %}
+      <li>{{ m }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+{% endblock %}

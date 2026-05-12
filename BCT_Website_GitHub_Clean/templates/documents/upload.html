@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Upload Document{% endblock %}
+{% block content %}
+<div class="card">
+  <h1 style="margin-top:0">Upload Document</h1>
+
+  <form method="post" enctype="multipart/form-data" id="uploadForm">
+    {% csrf_token %}
+
+    <div class="field">
+      <label for="{{ form.title.id_for_label }}">Title:</label><br>
+      {{ form.title }}
+    </div>
+
+    <div class="field">
+      <label for="{{ form.description.id_for_label }}">Description:</label><br>
+      {{ form.description }}
+    </div>
+
+    <div class="field">
+      <label for="{{ form.file.id_for_label }}">File:</label><br>
+      {{ form.file }}
+    </div>
+
+    <div class="field">
+      <label for="{{ form.visibility.id_for_label }}">Visibility:</label><br>
+      {{ form.visibility }}
+    </div>
+
+    <div style="margin-top:14px;">
+      <button class="btn" type="submit">Upload</button>
+      <button class="btn" type="button" id="cancelBtn" style="background:#64748b">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<script>
+document.getElementById("cancelBtn").addEventListener("click", function() {
+  if (confirm("Are you sure you want to cancel the upload?")) {
+    window.location.href = "{% url 'documents:index' %}";
+  }
+});
+</script>
+{% endblock %}

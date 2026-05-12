@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Contacts{% endblock %}
+{% block content %}
+<div class="card">
+  <h1 style="margin-top:0">Contacts</h1>
+
+  <form method="get" style="margin:12px 0;">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search name, username, or email..." />
+    <button class="btn" type="submit">Search</button>
+  </form>
+
+  {% if people %}
+    <div style="overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="text-align:left; border-bottom:1px solid #e5e7eb;">
+            <th style="padding:8px;">Name</th>
+            <th style="padding:8px;">Username</th>
+            <th style="padding:8px;">Role</th>
+            <th style="padding:8px;">Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in people %}
+          <tr style="border-bottom:1px solid #f1f5f9;">
+            <td style="padding:8px;">
+              {{ u.first_name }} {{ u.last_name }}
+            </td>
+            <td style="padding:8px;">{{ u.username }}</td>
+            <td style="padding:8px;">
+              {% if u.is_superuser or u.id in teamleader_ids %}
+                <span style="font-size:.8rem;padding:.15rem .45rem;border-radius:999px;
+                             border:1px solid #dbeafe;background:#eff6ff;color:#1e3a8a;">
+                  Teamleader
+                </span>
+              {% else %}
+                <span style="font-size:.8rem;padding:.15rem .45rem;border-radius:999px;
+                             border:1px solid #e5e7eb;background:#f8fafc;color:#334155;">
+                  Seller
+                </span>
+              {% endif %}
+            </td>
+            <td style="padding:8px;">
+              {% if u.email %}
+                <a href="mailto:{{ u.email }}" style="text-decoration:none;color:#0b3d62;">{{ u.email }}</a>
+              {% else %}
+                <span style="color:#94a3b8;">—</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if is_paginated %}
+      <div style="margin-top:12px;">
+        {% if page_obj.has_previous %}
+          <a class="btn" href="?q={{ query }}&page={{ page_obj.previous_page_number }}">Prev</a>
+        {% endif %}
+        <span style="margin:0 8px;">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+          <a class="btn" href="?q={{ query }}&page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% else %}
+    <p>No contacts found.</p>
+  {% endif %}
+</div>
+{% endblock %}

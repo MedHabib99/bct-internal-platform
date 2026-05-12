@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block title %}{{ article.title }} - News - BCT Sellers Platform{% endblock %}
+
+{% block content %}
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .article-content {
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  
+  .article-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 16px 0;
+    color: var(--text-dark);
+  }
+  
+  .article-badges {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  
+  .badge-important {
+    background: #fbbf24;
+    color: #78350f;
+  }
+  
+  .badge-category {
+    background: var(--bg-light);
+    color: var(--text-gray);
+  }
+
+  .badge-new {
+    background: #10b981;
+    color: white;
+  }
+
+  .badge-draft {
+    background: #64748b;
+    color: white;
+  }
+
+  .badge-published {
+    background: #3b82f6;
+    color: white;
+  }
+  
+  .article-meta {
+    display: flex;
+    gap: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--border);
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    flex-wrap: wrap;
+  }
+  
+  .article-body {
+    line-height: 1.8;
+    color: var(--text-dark);
+    white-space: pre-wrap;
+  }
+
+  .teamleader-actions {
+    display: flex;
+    gap: 10px;
+    padding-top: 20px;
+    margin-top: 20px;
+    border-top: 2px solid var(--border);
+  }
+</style>
+
+<div class="page-header">
+  <div class="header-actions">
+    <a class="btn btn-secondary btn-sm" href="{% url 'news:index' %}">← Back to News</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'home' %}">🏠 Dashboard</a>
+  </div>
+  {% if is_teamleader %}
+  <div class="header-actions">
+    <a class="btn btn-primary btn-sm" href="{% url 'news:edit' article.pk %}">✏️ Edit</a>
+    <a class="btn btn-danger btn-sm" href="{% url 'news:delete' article.pk %}">🗑️ Delete</a>
+  </div>
+  {% endif %}
+</div>
+
+<div class="article-content">
+  <h1 class="article-title">{{ article.title }}</h1>
+  
+  <div class="article-badges">
+    {% if article.is_important %}
+    <span class="badge badge-important">📌 Important</span>
+    {% endif %}
+    {% if article.is_new %}
+    <span class="badge badge-new">✨ NEW</span>
+    {% endif %}
+    {% if is_teamleader %}
+      {% if article.status == 'draft' %}
+      <span class="badge badge-draft">📝 Draft</span>
+      {% else %}
+      <span class="badge badge-published">✓ Published</span>
+      {% endif %}
+    {% endif %}
+    {% if article.category %}
+    <span class="badge badge-category">{{ article.category.name }}</span>
+    {% endif %}
+  </div>
+  
+  <div class="article-meta">
+    {% if article.status == 'published' and article.publish_date %}
+    <span>📅 Published: {{ article.publish_date|date:"F d, Y - H:i" }}</span>
+    {% else %}
+    <span>📅 Created: {{ article.created_at|date:"F d, Y - H:i" }}</span>
+    {% endif %}
+    {% if article.get_author %}
+    <span>✍️ By: {{ article.get_author.get_full_name|default:article.get_author.username }}</span>
+    {% endif %}
+    {% if article.updated_at != article.created_at %}
+    <span>🔄 Updated: {{ article.updated_at|date:"F d, Y" }}</span>
+    {% endif %}
+  </div>
+  
+  <div class="article-body">
+{{ article.content }}
+  </div>
+</div>
+
+{% endblock %}
+

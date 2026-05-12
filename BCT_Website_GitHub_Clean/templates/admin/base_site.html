@@ -1,0 +1,18 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ site_title|default:_("BCT Admin") }}{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin-extra.css' %}">
+{% endblock %}
+
+{% block branding %}
+  <h1 id="site-name" style="display:flex;align-items:center;gap:8px;">
+    <img src="{% static 'img/bct-logo.png' %}" alt="BCT" style="height:60px;">
+    <a href="{% url 'admin:index' %}">BCT Admin</a>
+  </h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

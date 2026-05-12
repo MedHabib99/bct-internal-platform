@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Edit Document{% endblock %}
+{% block content %}
+<div class="card">
+  <h1 style="margin-top:0">Edit Document</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" type="submit">Save changes</button>
+    <a class="btn" href="{% url 'documents:index' %}" style="background:#64748b">Cancel</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+{% block title %}News & Announcements - BCT Sellers Platform{% endblock %}
+
+{% block content %}
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .page-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  
+  .filter-btn {
+    padding: 8px 16px;
+    border: 2px solid var(--border);
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: var(--text-dark);
+  }
+  
+  .filter-btn:hover {
+    border-color: var(--bct-red);
+    color: var(--bct-red);
+  }
+  
+  .filter-btn.active {
+    background: var(--bct-red);
+    color: white;
+    border-color: var(--bct-red);
+  }
+  
+  .article-card {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 4px solid var(--bct-red);
+    transition: all 0.2s;
+    text-decoration: none;
+    color: var(--text-dark);
+    display: block;
+  }
+  
+  .article-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+  
+  .article-card.important {
+    border-left-width: 6px;
+    background: linear-gradient(to right, #fef2f2 0%, white 100%);
+  }
+
+  .article-card.draft {
+    border-left-color: #94a3b8;
+    background: linear-gradient(to right, #f8fafc 0%, white 100%);
+  }
+  
+  .article-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 12px;
+    gap: 12px;
+  }
+  
+  .article-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-dark);
+  }
+  
+  .article-badges {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+  
+  .badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  
+  .badge-important {
+    background: #fbbf24;
+    color: #78350f;
+  }
+  
+  .badge-category {
+    background: var(--bg-light);
+    color: var(--text-gray);
+  }
+
+  .badge-new {
+    background: #10b981;
+    color: white;
+  }
+
+  .badge-draft {
+    background: #64748b;
+    color: white;
+  }
+
+  .badge-published {
+    background: #3b82f6;
+    color: white;
+  }
+  
+  .article-preview {
+    color: var(--text-gray);
+    line-height: 1.6;
+    margin: 12px 0;
+  }
+  
+  .article-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 0.85rem;
+    color: var(--text-gray);
+    flex-wrap: wrap;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-gray);
+  }
+  
+  .empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+  }
+</style>
+
+<div class="page-header">
+  <h1>📰 News & Announcements</h1>
+  <div class="header-actions">
+    {% if is_teamleader %}
+    <a class="btn btn-primary btn-sm" href="{% url 'news:create' %}">+ Create Article</a>
+    {% endif %}
+    <a class="btn btn-secondary btn-sm" href="{% url 'home' %}">← Back to Dashboard</a>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <a href="?" class="filter-btn {% if not selected_category %}active{% endif %}">All</a>
+  {% for category in categories %}
+    <a href="?category={{ category.slug }}" class="filter-btn {% if selected_category == category.slug %}active{% endif %}">{{ category.name }}</a>
+  {% endfor %}
+</div>
+
+{% if not articles %}
+<div class="card empty-state">
+  <div class="empty-state-icon">📰</div>
+  <h2>News & Announcements</h2>
+  <p>News and updates will be posted here by your team leaders.</p>
+  <p style="margin-top: 12px;">Stay tuned for company announcements, tour updates, and important notifications.</p>
+</div>
+{% else %}
+
+{% for article in articles %}
+<a href="{% url 'news:detail' article.pk %}" class="article-card {% if article.is_important %}important{% endif %} {% if article.status == 'draft' %}draft{% endif %}">
+  <div class="article-header">
+    <h2 class="article-title">{{ article.title }}</h2>
+    <div class="article-badges">
+      {% if article.is_important %}
+      <span class="badge badge-important">📌 Important</span>
+      {% endif %}
+      {% if article.is_new %}
+      <span class="badge badge-new">✨ NEW</span>
+      {% endif %}
+      {% if is_teamleader %}
+        {% if article.status == 'draft' %}
+        <span class="badge badge-draft">📝 Draft</span>
+        {% else %}
+        <span class="badge badge-published">✓ Published</span>
+        {% endif %}
+      {% endif %}
+      {% if article.category %}
+      <span class="badge badge-category">{{ article.category.name }}</span>
+      {% endif %}
+    </div>
+  </div>
+  
+  <div class="article-preview">
+    {{ article.content|truncatewords:40 }}
+  </div>
+  
+  <div class="article-meta">
+    {% if article.status == 'published' and article.publish_date %}
+    <span>📅 {{ article.publish_date|date:"F d, Y" }}</span>
+    {% else %}
+    <span>📅 {{ article.created_at|date:"F d, Y" }}</span>
+    {% endif %}
+    {% if article.get_author %}
+    <span>✍️ {{ article.get_author.get_full_name|default:article.get_author.username }}</span>
+    {% endif %}
+  </div>
+</a>
+{% endfor %}
+
+{% endif %}
+
+{% endblock %}
+

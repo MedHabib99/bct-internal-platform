@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} - News - BCT Sellers Platform{% endblock %}
+
+{% block content %}
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .page-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  
+  .form-container {
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    max-width: 900px;
+  }
+  
+  .form-group {
+    margin-bottom: 24px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+  }
+  
+  .form-group .form-control {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s;
+  }
+  
+  .form-group .form-control:focus {
+    outline: none;
+    border-color: var(--bct-red);
+    box-shadow: 0 0 0 3px rgba(201, 48, 44, 0.1);
+  }
+  
+  .form-group .help-text {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-gray);
+    margin-top: 6px;
+  }
+
+  .form-group.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .form-group.checkbox-group label {
+    margin-bottom: 0;
+  }
+
+  .form-check-input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  
+  .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0 0;
+  }
+  
+  .errorlist li {
+    color: #dc2626;
+    font-size: 0.9rem;
+    padding: 4px 0;
+  }
+  
+  .form-group.error .form-control {
+    border-color: #dc2626;
+  }
+
+  .info-box {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+  }
+
+  .info-box p {
+    margin: 0;
+    color: #1e40af;
+    font-size: 0.9rem;
+  }
+</style>
+
+<div class="page-header">
+  <h1>{{ title }}</h1>
+  <a class="btn btn-secondary btn-sm" href="{% if article %}{% url 'news:detail' article.pk %}{% else %}{% url 'news:index' %}{% endif %}">← Cancel</a>
+</div>
+
+<div class="form-container">
+  <div class="info-box">
+    <p><strong>💡 Tip:</strong> Draft articles are only visible to teamleaders. Set status to "Published" when ready to share with all sellers.</p>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group {% if form.title.errors %}error{% endif %}">
+      <label for="{{ form.title.id_for_label }}">Article Title *</label>
+      {{ form.title }}
+      {% if form.title.errors %}
+        <ul class="errorlist">
+          {% for error in form.title.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    
+    <div class="form-group {% if form.content.errors %}error{% endif %}">
+      <label for="{{ form.content.id_for_label }}">Content *</label>
+      {{ form.content }}
+      {% if form.content.errors %}
+        <ul class="errorlist">
+          {% for error in form.content.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    
+    <div class="form-group {% if form.category.errors %}error{% endif %}">
+      <label for="{{ form.category.id_for_label }}">Category</label>
+      {{ form.category }}
+      {% if form.category.errors %}
+        <ul class="errorlist">
+          {% for error in form.category.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    
+    <div class="form-group {% if form.status.errors %}error{% endif %}">
+      <label for="{{ form.status.id_for_label }}">Status *</label>
+      {{ form.status }}
+      <span class="help-text">{{ form.status.help_text }}</span>
+      {% if form.status.errors %}
+        <ul class="errorlist">
+          {% for error in form.status.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    
+    <div class="form-group {% if form.publish_date.errors %}error{% endif %}">
+      <label for="{{ form.publish_date.id_for_label }}">Publish Date</label>
+      {{ form.publish_date }}
+      <span class="help-text">{{ form.publish_date.help_text }}</span>
+      {% if form.publish_date.errors %}
+        <ul class="errorlist">
+          {% for error in form.publish_date.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    
+    <div class="form-group checkbox-group {% if form.is_important.errors %}error{% endif %}">
+      {{ form.is_important }}
+      <label for="{{ form.is_important.id_for_label }}">Pin as Important</label>
+      {% if form.is_important.help_text %}
+      <span class="help-text">{{ form.is_important.help_text }}</span>
+      {% endif %}
+      {% if form.is_important.errors %}
+        <ul class="errorlist">
+          {% for error in form.is_important.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">{{ submit_text }}</button>
+      <a href="{% if article %}{% url 'news:detail' article.pk %}{% else %}{% url 'news:index' %}{% endif %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

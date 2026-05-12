@@ -1,0 +1,24 @@
+/* static/admin-extra.css */
+
+:root {
+  --brand-color: #e01010;   
+}
+
+#header {
+  background: var(--brand-color) !important;
+}
+
+#header a:link,
+#header a:visited {
+  color: #fff !important;
+}
+
+#branding h1 {
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+#branding img {
+  height: 28px;
+  vertical-align: middle;
+}

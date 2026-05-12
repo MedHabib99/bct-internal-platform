@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Send Feedback / Complaint{% endblock %}
+
+{% block content %}
+<h1 class="hdr">
+  <span>Send Feedback / Complaint</span>
+  <span class="hdr-actions">
+    {% if is_teamleader %}
+      <a class="btn btn-secondary btn-sm" href="{% url 'feedback:admin_list' %}">📋 See Current Feedbacks</a>
+    {% else %}
+      <a class="btn btn-secondary btn-sm" href="{% url 'feedback:my_list' %}">💬 See My Feedback</a>
+    {% endif %}
+    <a class="btn btn-secondary btn-sm" href="{% url 'home' %}">← See Dashboard</a>
+  </span>
+</h1>
+
+<div class="card">
+
+  <style>
+    .hdr{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+    .hdr-actions{display:flex;gap:8px;flex-wrap:wrap;}
+    .btn, .btn-secondary { text-decoration:none; }  /* remove underline */
+    .btn-sm { padding:6px 10px; font-size:.9rem; }
+
+    .form-grid{display:grid;grid-template-columns:200px 1fr;gap:12px 16px;align-items:center;}
+    .form-grid label.form-label{font-weight:600;margin:0;}
+    .form-grid .full{grid-column:1 / -1;}
+    .form-grid textarea{min-height:140px;}
+    .form-help{font-size:.9rem;opacity:.85;margin-top:-6px;}
+
+    .switch{position:relative;display:inline-block;width:46px;height:26px;}
+    .switch input{opacity:0;width:0;height:0;}
+    .slider{position:absolute;inset:0;border-radius:26px;cursor:pointer;background:#e5e7eb;transition:.2s;}
+    .slider:before{content:"";position:absolute;left:3px;top:3px;height:20px;width:20px;background:#fff;border-radius:50%;box-shadow:0 1px 2px rgba(0,0,0,.1);transition:.2s;}
+    .switch input:checked + .slider{background:#2563eb;}
+    .switch input:checked + .slider:before{transform:translateX(20px);}
+
+    .alert{border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;padding:10px 12px;font-size:.92rem;margin-top:10px;}
+    .alert strong{font-weight:600;}
+    .alert .dim{opacity:.9;}
+  </style>
+
+  <form method="post" enctype="multipart/form-data" class="form-grid">
+    {% csrf_token %}
+
+    <label class="form-label" for="{{ form.title.id_for_label }}">Title</label>
+    {{ form.title }}
+
+    <label class="form-label" for="{{ form.category.id_for_label }}">Category</label>
+    {{ form.category }}
+
+    <label class="form-label" for="{{ form.message.id_for_label }}">Message</label>
+    {{ form.message }}
+    <div class="full form-help">Describe your feedback/issue in detail. Don’t include passwords or sensitive personal data.</div>
+
+    <label class="form-label">Submit as anonymous</label>
+    <div>
+      <label class="switch" aria-label="Submit as anonymous">
+        {{ form.is_anonymous }}
+        <span class="slider"></span>
+      </label>
+
+      <div id="anon-info" class="alert">
+        <strong>Currently: <span id="anon-state">OFF</span></strong><br>
+        <span class="dim">If OFF: we store your username with this feedback so TeamLeaders can follow up with you.</span>
+      </div>
+    </div>
+
+    <label class="form-label" for="{{ form.attachment.id_for_label }}">Attachment (optional)</label>
+    {{ form.attachment }}
+
+    <div class="full" style="margin-top:8px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-sm" type="submit">Submit</button>
+      {% if is_teamleader %}
+        <a class="btn btn-secondary btn-sm" href="{% url 'feedback:admin_list' %}">📋 See Current Feedbacks</a>
+      {% else %}
+        <a class="btn btn-secondary btn-sm" href="{% url 'feedback:my_list' %}">💬 See My Feedback</a>
+      {% endif %}
+      <a class="btn btn-secondary btn-sm" href="{% url 'home' %}">← See Dashboard</a>
+    </div>
+
+    <script>
+      (function(){
+        const cb = document.getElementById("{{ form.is_anonymous.id_for_label }}");
+        const box = document.getElementById("anon-info");
+        const state = document.getElementById("anon-state");
+        function render(){
+          const on = cb && cb.checked;
+          if(state){ state.textContent = on ? "ON" : "OFF"; }
+          if(box){
+            box.innerHTML = on
+              ? `<strong>Currently: ON</strong><br><span class="dim">Your name will <u>not</u> be stored. You can still track status via <em>My Feedback</em> on this browser.</span>`
+              : `<strong>Currently: OFF</strong><br><span class="dim">We will store your username so TeamLeaders can respond.</span>`;
+          }
+        }
+        if (cb){ cb.addEventListener("change", render); render(); }
+      })();
+    </script>
+  </form>
+</div>
+{% endblock %}

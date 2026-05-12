@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}Partners - BCT Sellers Platform{% endblock %}
+
+{% block content %}
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .page-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  
+  .filter-btn {
+    padding: 8px 16px;
+    border: 2px solid var(--border);
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: var(--text-dark);
+  }
+  
+  .filter-btn:hover {
+    border-color: var(--bct-red);
+    color: var(--bct-red);
+  }
+  
+  .filter-btn.active {
+    background: var(--bct-red);
+    color: white;
+    border-color: var(--bct-red);
+  }
+  
+  .partners-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  
+  .partner-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid var(--border);
+  }
+  
+  .partner-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
+  
+  .partner-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: var(--text-dark);
+  }
+  
+  .partner-category {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--bg-light);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-gray);
+    margin-bottom: 12px;
+  }
+  
+  .partner-description {
+    color: var(--text-gray);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  
+  .partner-info {
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    margin: 6px 0;
+  }
+  
+  .partner-info strong {
+    color: var(--text-dark);
+  }
+  
+  .partner-discount {
+    background: #fef3c7;
+    border: 1px solid #fbbf24;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 12px;
+    font-size: 0.9rem;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-gray);
+  }
+  
+  .empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+  }
+</style>
+
+<div class="page-header">
+  <h1>🤝 Partners</h1>
+  <a class="btn btn-secondary btn-sm" href="{% url 'home' %}">← Back to Dashboard</a>
+</div>
+
+<div class="filter-bar">
+  <a href="?" class="filter-btn {% if not selected_category %}active{% endif %}">All</a>
+  {% for value, label in categories %}
+    <a href="?category={{ value }}" class="filter-btn {% if selected_category == value %}active{% endif %}">{{ label }}</a>
+  {% endfor %}
+</div>
+
+{% if not partners %}
+<div class="card empty-state">
+  <div class="empty-state-icon">🤝</div>
+  <h2>Partner Information</h2>
+  <p>Partner companies information will be added here soon.</p>
+  <p style="margin-top: 12px;">This section will include restaurants, attractions, and other BCT partners.</p>
+</div>
+{% else %}
+
+<div class="partners-grid">
+  {% for partner in partners %}
+  <div class="partner-card">
+    {% if partner.logo %}
+    <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="partner-logo">
+    {% endif %}
+    
+    <h3 class="partner-name">{{ partner.name }}</h3>
+    <span class="partner-category">{{ partner.get_category_display }}</span>
+    
+    <p class="partner-description">{{ partner.description }}</p>
+    
+    {% if partner.address %}
+    <div class="partner-info"><strong>📍</strong> {{ partner.address }}</div>
+    {% endif %}
+    
+    {% if partner.phone %}
+    <div class="partner-info"><strong>📞</strong> {{ partner.phone }}</div>
+    {% endif %}
+    
+    {% if partner.email %}
+    <div class="partner-info"><strong>✉️</strong> {{ partner.email }}</div>
+    {% endif %}
+    
+    {% if partner.website %}
+    <div class="partner-info"><strong>🌐</strong> <a href="{{ partner.website }}" target="_blank">Visit Website</a></div>
+    {% endif %}
+    
+    {% if partner.discount_info %}
+    <div class="partner-discount">
+      <strong>💰 Special Offer:</strong><br>
+      {{ partner.discount_info }}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+{% endif %}
+
+{% endblock %}
+

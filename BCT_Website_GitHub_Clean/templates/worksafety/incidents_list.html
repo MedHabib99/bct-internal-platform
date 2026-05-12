@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% block title %}Incident Reports - Work Safety{% endblock %}
+
+{% block content %}
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .page-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+
+  .incidents-card {
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .incident-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .incident-item {
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
+    transition: background 0.2s;
+  }
+
+  .incident-item:hover {
+    background: #f8f9fa;
+  }
+
+  .incident-item:last-child {
+    border-bottom: none;
+  }
+
+  .incident-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 12px;
+    gap: 16px;
+  }
+
+  .incident-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+  }
+
+  .incident-meta {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 8px;
+  }
+
+  .incident-description {
+    margin: 12px 0;
+    color: var(--text-gray);
+    line-height: 1.6;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-open {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .badge-reviewed {
+    background: #cfe2ff;
+    color: #084298;
+  }
+
+  .badge-closed {
+    background: #d1e7dd;
+    color: #0f5132;
+  }
+
+  .incident-actions {
+    margin-top: 12px;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary {
+    background: var(--bct-red);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #c82333;
+    color: white;
+  }
+
+  .btn-secondary {
+    background: #6c757d;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background: #5a6268;
+    color: white;
+  }
+
+  .btn-outline-primary {
+    background: transparent;
+    border: 2px solid var(--bct-red);
+    color: var(--bct-red);
+  }
+
+  .btn-outline-primary:hover {
+    background: var(--bct-red);
+    color: white;
+  }
+
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-gray);
+  }
+
+  .empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+  }
+</style>
+
+<div class="page-header">
+  <h1>Incident Reports</h1>
+  <a class="btn btn-secondary" href="{% url 'worksafety:index' %}">← Back</a>
+</div>
+
+<div class="incidents-card">
+  {% if incidents %}
+    <ul class="incident-list">
+      {% for incident in incidents %}
+      <li class="incident-item">
+        <div class="incident-header">
+          <div style="flex: 1;">
+            <h3 class="incident-title">{{ incident.title }}</h3>
+            <div class="incident-meta">
+              Occurred: {{ incident.occurred_at|date:"M d, Y H:i" }} | 
+              Submitted by: {{ incident.submitted_by.get_full_name|default:incident.submitted_by.username }} | 
+              Reported: {{ incident.created_at|date:"M d, Y" }}
+              {% if incident.location %}
+                | Location: {{ incident.location }}
+              {% endif %}
+            </div>
+          </div>
+          <span class="badge badge-{{ incident.status }}">{{ incident.get_status_display }}</span>
+        </div>
+        
+        <div class="incident-description">
+          {{ incident.description|truncatewords:30 }}
+        </div>
+
+        <div class="incident-actions">
+          <a href="{% url 'worksafety:incident_detail' incident.pk %}" class="btn btn-outline-primary btn-sm">View Details</a>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon">📋</div>
+      <h2>No Incident Reports</h2>
+      <p>No incidents have been reported yet.</p>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

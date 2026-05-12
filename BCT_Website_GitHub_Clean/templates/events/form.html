@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} - Events - BCT Sellers Platform{% endblock %}
+
+{% block content %}
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .page-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  
+  .form-container {
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    max-width: 800px;
+  }
+  
+  .form-group {
+    margin-bottom: 24px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+  }
+  
+  .form-group .form-control {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s;
+  }
+  
+  .form-group .form-control:focus {
+    outline: none;
+    border-color: var(--bct-red);
+    box-shadow: 0 0 0 3px rgba(201, 48, 44, 0.1);
+  }
+  
+  .form-group .help-text {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-gray);
+    margin-top: 6px;
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  
+  .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0 0;
+  }
+  
+  .errorlist li {
+    color: #dc2626;
+    font-size: 0.9rem;
+    padding: 4px 0;
+  }
+  
+  .form-group.error .form-control {
+    border-color: #dc2626;
+  }
+</style>
+
+<div class="page-header">
+  <h1>{{ title }}</h1>
+  <a class="btn btn-secondary btn-sm" href="{% if event %}{% url 'events:detail' event.pk %}{% else %}{% url 'events:index' %}{% endif %}">← Cancel</a>
+</div>
+
+<div class="form-container">
+  <form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group {% if form.title.errors %}error{% endif %}">
+      <label for="{{ form.title.id_for_label }}">Event Title *</label>
+      {{ form.title }}
+      {% if form.title.errors %}
+        <ul class="errorlist">
+          {% for error in form.title.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    
+    <div class="form-group {% if form.description.errors %}error{% endif %}">
+      <label for="{{ form.description.id_for_label }}">Description *</label>
+      {{ form.description }}
+      {% if form.description.errors %}
+        <ul class="errorlist">
+          {% for error in form.description.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    
+    <div class="form-group {% if form.date.errors %}error{% endif %}">
+      <label for="{{ form.date.id_for_label }}">Date & Time *</label>
+      {{ form.date }}
+      {% if form.date.errors %}
+        <ul class="errorlist">
+          {% for error in form.date.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    
+    <div class="form-group {% if form.location.errors %}error{% endif %}">
+      <label for="{{ form.location.id_for_label }}">Location *</label>
+      {{ form.location }}
+      {% if form.location.errors %}
+        <ul class="errorlist">
+          {% for error in form.location.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    
+    <div class="form-group {% if form.max_participants.errors %}error{% endif %}">
+      <label for="{{ form.max_participants.id_for_label }}">Maximum Participants</label>
+      {{ form.max_participants }}
+      <span class="help-text">{{ form.max_participants.help_text }}</span>
+      {% if form.max_participants.errors %}
+        <ul class="errorlist">
+          {% for error in form.max_participants.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    
+    <div class="form-group {% if form.participants_visible_to.errors %}error{% endif %}">
+      <label for="{{ form.participants_visible_to.id_for_label }}">Participant Visibility *</label>
+      {{ form.participants_visible_to }}
+      <span class="help-text">{{ form.participants_visible_to.help_text }}</span>
+      {% if form.participants_visible_to.errors %}
+        <ul class="errorlist">
+          {% for error in form.participants_visible_to.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">{{ submit_text }}</button>
+      <a href="{% if event %}{% url 'events:detail' event.pk %}{% else %}{% url 'events:index' %}{% endif %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

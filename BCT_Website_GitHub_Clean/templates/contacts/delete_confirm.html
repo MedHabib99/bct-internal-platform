@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Delete Contact{% endblock %}
+{% block content %}
+<div class="card">
+  <h1 style="margin-top:0">Delete Contact</h1>
+  <p>Are you sure you want to delete <strong>{{ object.name }}</strong>?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn" type="submit">Yes, delete</button>
+    <a class="btn" href="{% url 'contacts:index' %}" style="background:#64748b">Cancel</a>
+  </form>
+</div>
+{% endblock %}

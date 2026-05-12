@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Documents & Resources{% endblock %}
+{% block content %}
+<div class="card">
+  <h1 style="margin-top:0">Documents & Resources</h1>
+{% if is_teamleader %}
+  <p><a class="btn" href="{% url 'documents:upload' %}">+ Add document</a></p>
+{% endif %}
+
+  <form method="get" style="margin:12px 0;">
+    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search documents..." />
+    <button class="btn" type="submit">Search</button>
+  </form>
+
+  {% if documents %}
+    <ul style="list-style:none;padding:0;margin:0;">
+  {% for doc in documents %}
+  <li style="padding:12px 8px;border-bottom:1px solid #eee;
+             display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    
+    <!-- Left side: document info -->
+    <div style="display:flex;align-items:flex-start;gap:10px;flex:1;">
+      <span style="font-size:.8rem;padding:.15rem .45rem;border-radius:999px;
+                   border:1px solid #e5e7eb;background:#f8fafc;color:#334155">
+        {% if doc.visibility == "all" %}All users{% else %}Teamleaders{% endif %}
+      </span>
+      <div style="flex:1;">
+        <div style="font-weight:600;">
+          <a href="{{ doc.file.url }}" target="_blank" rel="noopener"
+             style="color:#0b3d62;text-decoration:none;">{{ doc.title }}</a>
+        </div>
+        {% if doc.description %}
+          <div style="color:#475569;">{{ doc.description }}</div>
+        {% endif %}
+        <small style="color:#64748b;">Uploaded {{ doc.created_at|date:"Y-m-d H:i" }}</small>
+      </div>
+    </div>
+
+    <!-- Right side: edit/delete buttons (only for Teamleaders) -->
+    {% if is_teamleader %}
+    <div style="display:flex;gap:6px;">
+      <a class="btn" href="{% url 'documents:edit' doc.pk %}"
+         style="font-size:0.8rem;padding:6px 10px;text-decoration:none;">Edit</a>
+      <a class="btn" href="{% url 'documents:delete' doc.pk %}"
+         style="font-size:0.8rem;padding:6px 10px;background:#dc2626;text-decoration:none;">Delete</a>
+    </div>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+
+
+    {% if is_paginated %}
+      <div style="margin-top:12px;">
+        {% if page_obj.has_previous %}
+          <a class="btn" href="?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}">Prev</a>
+        {% endif %}
+        <span style="margin:0 8px;">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+          <a class="btn" href="?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% else %}
+    <p>No documents yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

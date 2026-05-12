@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}{{ view.object|default_if_none:"Add" }} Contact{% endblock %}
+{% block content %}
+<div class="card">
+  <h1 style="margin:0 0 12px 0;">
+    {% if view.object %}Edit{% else %}Add{% endif %} Contact
+  </h1>
+
+  <form method="post" enctype="multipart/form-data" id="contactForm">
+    {% csrf_token %}
+
+    <div class="field">
+      <label for="{{ form.name.id_for_label }}">Name</label><br>
+      {{ form.name }}
+    </div>
+
+    <div class="field">
+      <label for="{{ form.title.id_for_label }}">Title / Role</label><br>
+      {{ form.title }}
+    </div>
+
+    <div class="field">
+      <label for="{{ form.email.id_for_label }}">Email</label><br>
+      {{ form.email }}
+    </div>
+
+    <div class="field">
+      <label for="{{ form.whatsapp.id_for_label }}">WhatsApp</label><br>
+      {{ form.whatsapp }}
+    </div>
+
+    <div class="field">
+      <label for="{{ form.joined_on.id_for_label }}">Joined on</label><br>
+      {{ form.joined_on }}
+    </div>
+
+    <div class="field">
+      <label for="{{ form.photo.id_for_label }}">Photo</label><br>
+      {{ form.photo }}
+      <!-- Preview -->
+      <div id="photoPreviewWrap" style="margin-top:8px; display:flex; align-items:center; gap:10px;">
+        <img id="photoPreview"
+             src="{% if view.object and view.object.photo %}{{ view.object.photo.url }}{% endif %}"
+             alt=""
+             style="width:90px;height:90px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;{% if not view.object or not view.object.photo %}display:none{% endif %}">
+        <button class="btn" type="button" id="clearPhotoBtn"
+                style="background:#64748b;{% if not view.object or not view.object.photo %}display:none{% endif %}">
+          Clear photo
+        </button>
+      </div>
+    </div>
+
+    <div class="field" style="display:flex;gap:12px;flex-wrap:wrap;">
+      <div>
+        <label for="{{ form.seller_of_month_count.id_for_label }}">Seller of the Month (count)</label><br>
+        {{ form.seller_of_month_count }}
+      </div>
+      <div>
+        <label for="{{ form.icebar_of_month_count.id_for_label }}">Ice Bar Seller of the Month (count)</label><br>
+        {{ form.icebar_of_month_count }}
+      </div>
+    </div>
+
+    <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="btn" type="submit">Save</button>
+      <button class="btn" type="button" id="cancelBtn" style="background:#64748b">Cancel</button>
+      {% if view.object %}
+        <a class="btn" href="{% url 'contacts:delete' view.object.pk %}" style="background:#dc2626">Delete</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+
+<script>
+(function() {
+  const fileInput = document.getElementById("{{ form.photo.id_for_label }}");
+  const preview = document.getElementById("photoPreview");
+  const clearBtn = document.getElementById("clearPhotoBtn");
+
+  // Show live preview
+  if (fileInput) {
+    fileInput.addEventListener("change", function () {
+      const f = this.files && this.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+        if (clearBtn) clearBtn.style.display = "inline-block";
+      };
+      reader.readAsDataURL(f);
+
+      const clearBox = document.querySelector('input#photo-clear');
+      if (clearBox) clearBox.checked = false;
+    });
+  }
+
+  // Clear photo button
+  if (clearBtn) {
+    clearBtn.addEventListener("click", function () {
+      if (fileInput) fileInput.value = "";
+      const clearBox = document.querySelector('input#photo-clear');
+      if (clearBox) clearBox.checked = true;
+      preview.src = "";
+      preview.style.display = "none";
+      clearBtn.style.display = "none";
+    });
+  }
+
+  // Cancel with confirmation
+  document.getElementById("cancelBtn").addEventListener("click", function() {
+    if (confirm("Discard changes and go back to the directory?")) {
+      window.location.href = "{% url 'contacts:index' %}";
+    }
+  });
+})();
+</script>
+{% endblock %}

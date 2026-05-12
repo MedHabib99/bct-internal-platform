@@ -1,0 +1,317 @@
+{# templates/base.html #}
+{% load static %}
+{% load user_extras %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}BCT Sellers Platform{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bct-red: #c9302c;
+      --bct-red-dark: #ba2121;
+      --bct-red-light: #e74c3c;
+      --text-dark: #1a1a1a;
+      --text-gray: #666;
+      --bg-light: #f8f9fa;
+      --card-bg: #ffffff;
+      --border: #e5e7eb;
+    }
+    
+    * { box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      margin: 0;
+      color: var(--text-dark);
+      background: var(--bg-light);
+      line-height: 1.6;
+    }
+    
+    /* Header */
+    header {
+      background: var(--bct-red);
+      color: white;
+      box-shadow: 0 2px 8px rgba(201, 48, 44, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo-img {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 8px;
+      padding: 4px;
+      object-fit: contain;
+    }
+    
+    .site-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+    
+    .site-subtitle {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+    
+    nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    
+    nav a:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+    
+    nav a.active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Main Content */
+    .content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+      min-height: calc(100vh - 200px);
+    }
+    
+    /* Messages/Alerts */
+    .messages {
+      margin-bottom: 20px;
+    }
+    
+    .flash {
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    
+    .flash.success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+    
+    .flash.error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    
+    .flash.warning {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      color: #856404;
+    }
+    
+    .flash.info {
+      background: #d1ecf1;
+      border: 1px solid #bee5eb;
+      color: #0c5460;
+    }
+    
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    
+    .btn-primary {
+      background: var(--bct-red);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--bct-red-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(201, 48, 44, 0.3);
+    }
+    
+    .btn-secondary {
+      background: white;
+      color: var(--text-dark);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--bg-light);
+      border-color: var(--bct-red);
+      color: var(--bct-red);
+    }
+    
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: 0.9rem;
+    }
+    
+    /* Card */
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+    }
+    
+    /* Footer */
+    footer {
+      background: white;
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+      color: var(--text-gray);
+    }
+    
+    .footer-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .footer-links a {
+      color: var(--text-gray);
+      text-decoration: none;
+      margin-left: 16px;
+      font-size: 0.9rem;
+    }
+    
+    .footer-links a:hover {
+      color: var(--bct-red);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-wrap {
+        padding: 12px 16px;
+      }
+      
+      .site-title {
+        font-size: 1.2rem;
+      }
+      
+      nav {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      nav a {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+      }
+      
+      .content {
+        padding: 16px;
+      }
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <header>
+    <div class="header-wrap">
+      <div class="logo-section">
+        <img src="{% static 'img/bct-logo.png' %}" alt="BCT Logo" class="logo-img" onerror="this.style.display='none'">
+        <div>
+          <div class="site-title">BCT Sellers Platform</div>
+          <div class="site-subtitle">Berlin City Tour</div>
+        </div>
+      </div>
+      <nav>
+        <a href="{% url 'home' %}">🏠 Home</a>
+        {% if request.user.is_authenticated %}
+          <a href="{% url 'feedback:my_list' %}">💬 Feedback</a>
+          {% if is_teamleader %}
+            <a href="{% url 'feedback:admin_list' %}">📋 Inbox</a>
+          {% endif %}
+          <a href="{% url 'accounts:password_change' %}">🔒 Password</a>
+          {% if request.user.is_superuser %}
+            <a href="/admin/">⚙️ Admin</a>
+          {% endif %}
+          <a href="{% url 'signout' %}">👋 Logout</a>
+        {% else %}
+          <a href="{% url 'accounts:login' %}">🔑 Login</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="content">
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="flash {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <div class="footer-wrap">
+      <div>© {% now "Y" %} Berlin City Tour GmbH - Internal Sellers Platform</div>
+      <div class="footer-links">
+        <a href="/contacts/">Contact</a>
+        <a href="/documents/">Resources</a>
+        <a href="/feedback/">Help</a>
+      </div>
+    </div>
+  </footer>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

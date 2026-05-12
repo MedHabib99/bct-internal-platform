@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Login</h1>
+If you still don't have an account, please contact one of the Teamleaders to create one for you.
+
+<form method="post">
+  {% csrf_token %}
+  <br><label>Username:</label><br>
+  <input type="text" name="username" required><br><br>
+
+  <label>Password:</label><br>
+  <input type="password" name="password" required><br><br>
+
+  <button type="submit">Continue</button>
+</form>
+<p><a href="{% url 'accounts:password_reset' %}">Forgot your password? Click here to reset your password via email.</a></p>
+
+{% if messages %}
+  <ul>
+    {% for m in messages %}
+      <li>{{ m }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+{% endblock %}
